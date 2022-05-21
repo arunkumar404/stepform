@@ -52,7 +52,7 @@ const Form = () => {
     }
 
     const handleNext1 = () =>{
-        let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
+        let regex = new RegExp(`[a-z0-9]+@[a-z]+.[a-z]{2,3}`);
         if(!regex.test(user.email)){
             setEmailInvalid(true)
             setTimeout(()=>{setEmailInvalid(false)},[2000])
