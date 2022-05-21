@@ -17,7 +17,9 @@ const Form = () => {
     }
     
     const [user, setUser] = useState(initialState)
-    
+    const [notFilled, setNotFilled] = useState(false)
+    const [emailInvalid, setEmailInvalid] = useState(false)
+
     const handleChange = (e) =>{
         setUser({
             ...user,
@@ -27,15 +29,51 @@ const Form = () => {
     
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        let users = JSON.parse(localStorage.getItem("users"))
         
-        if(users){
-            users.push(user)
-            localStorage.setItem("users", JSON.stringify([...users]))
+        setNotFilled(false)
+        if(user.interestedCourse && user.mobile){
+            
+            let users = JSON.parse(localStorage.getItem("users"))
+            
+            if(users){
+                users.push(user)
+                localStorage.setItem("users", JSON.stringify([...users]))
+                return
+            }
+            localStorage.setItem("users", JSON.stringify([user]))
+            setUser(initialState)
+            setActiveFormPart(1)
+            
+        }else{
+            setNotFilled(true)
+            setTimeout(()=>{setNotFilled(false)},[2000])
+        }
+        
+    }
+
+    const handleNext1 = () =>{
+        let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
+        if(!regex.test(user.email)){
+            setEmailInvalid(true)
+            setTimeout(()=>{setEmailInvalid(false)},[2000])
             return
         }
-        localStorage.setItem("users", JSON.stringify([user]))
+        setNotFilled(false)
+        if(user.firstName && user.lastName && user.email){
+            setActiveFormPart(2)
+        }else{
+            setNotFilled(true)
+            setTimeout(()=>{setNotFilled(false)},[2000])
+        }
+    }
+    const handleNext2 = () =>{
+         setNotFilled(false)
+        if(user.address1 && user.address2 && user.country){
+            setActiveFormPart(3)
+        }else{
+            setNotFilled(true)
+            setTimeout(()=>{setNotFilled(false)},[2000])
+        }
     }
 
   return (
@@ -55,7 +93,13 @@ const Form = () => {
 
                 </div>
                 <div className="buttonSec">
-                    <button type="button" className="slideBtn" onClick={()=>setActiveFormPart(2)}>Next</button>
+                    <button type="button" className="slideBtn" onClick={handleNext1}>Next</button>
+                    {emailInvalid&&
+                    <p className="emailerrorMsg">Email is invalid. Please enter correct email</p>
+                    }
+                    {notFilled&&
+                    <p className="errorMsg">Please fill all the fields</p>
+                    }
                 </div>
             </section>
             <section className="formParts" style={{transform:`${activeFormPart===1?"translateX(0%)":activeFormPart===2?"translateX(-100%)":activeFormPart===3?"translateX(-200%)":"none"}`}}>
@@ -76,7 +120,10 @@ const Form = () => {
                 </div>
                 <div className="buttonSec">
                     <button type="button" className="slideBtn" onClick={()=>setActiveFormPart(1)}>Prev</button>
-                    <button type="button" className="slideBtn" onClick={()=>setActiveFormPart(3)}>Next</button>
+                    {notFilled&&
+                    <p className="errorMsg">Please fill all the fields</p>
+                    }
+                    <button type="button" className="slideBtn" onClick={handleNext2}>Next</button>
                 </div>
             </section>
             <section className="formParts" style={{transform:`${activeFormPart===1?"translateX(0%)":activeFormPart===2?"translateX(-100%)":activeFormPart===3?"translateX(-200%)":"none"}`}}>
@@ -95,6 +142,9 @@ const Form = () => {
                 </div>
                 <div className="buttonSec">
                     <button type="button" className="slideBtn" onClick={()=>setActiveFormPart(2)}>Prev</button>
+                    {notFilled&&
+                    <p className="errorMsg">Please fill all the fields</p>
+                    }
                     <button type="submit" className="slideBtn">Submit</button>
                 </div>
             </section>
