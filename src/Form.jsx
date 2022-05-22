@@ -24,7 +24,9 @@ const Form = () => {
     const [notFilled, setNotFilled] = useState(false)
     //invalid email error state
     const [emailInvalid, setEmailInvalid] = useState(false)
-
+    //user save success state
+    const [userSaveSuccess, setUserSaveSuccess] = useState(false)
+    
     //form input change handler
     const handleChange = (e) =>{
         setUser({
@@ -48,11 +50,15 @@ const Form = () => {
                 localStorage.setItem("users", JSON.stringify([...users]))
                 setUser(initialState)
                 setActiveFormPart(1)
+                setUserSaveSuccess(true)
+                setTimeout(()=>{setUserSaveSuccess(false)},[1000])
                 return
             }
             localStorage.setItem("users", JSON.stringify([user]))
             setUser(initialState)
             setActiveFormPart(1)
+            setUserSaveSuccess(true)
+            setTimeout(()=>{setUserSaveSuccess(false)},[1000])
             
         }else{
             setNotFilled(true)
@@ -111,6 +117,9 @@ const Form = () => {
                     }
                     {notFilled&&
                     <p className="errorMsg">Please fill all the fields</p>
+                    }
+                    {userSaveSuccess&&
+                    <p className="saveSuccessMsg">User details saved successfully</p>
                     }
                 </div>
             </section>
