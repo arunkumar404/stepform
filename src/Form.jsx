@@ -3,8 +3,10 @@ import "./Form.css";
 
 const Form = () => {
 
+    //set default active step in form
     const [activeFormPart, setActiveFormPart] = useState(1);
 
+    //default state
     const initialState = {
         firstName: "",
         lastName: "",
@@ -15,11 +17,15 @@ const Form = () => {
         interestedCourse: "javascript",
         mobile: "",
     }
-    
+
     const [user, setUser] = useState(initialState)
+
+    //empty fields error state
     const [notFilled, setNotFilled] = useState(false)
+    //invalid email error state
     const [emailInvalid, setEmailInvalid] = useState(false)
 
+    //form input change handler
     const handleChange = (e) =>{
         setUser({
             ...user,
@@ -27,17 +33,21 @@ const Form = () => {
         })
     }
     
+    //form submit handler
     const handleSubmit = (e) => {
         e.preventDefault();
-        
         setNotFilled(false)
+        
         if(user.interestedCourse && user.mobile){
             
+            //get saved users list and save current inputs accordingly
             let users = JSON.parse(localStorage.getItem("users"))
             
             if(users){
                 users.push(user)
                 localStorage.setItem("users", JSON.stringify([...users]))
+                setUser(initialState)
+                setActiveFormPart(1)
                 return
             }
             localStorage.setItem("users", JSON.stringify([user]))
@@ -52,18 +62,20 @@ const Form = () => {
     }
 
     const handleNext1 = () =>{
+        //email validator
         let regex = new RegExp(`[a-z0-9]+@[a-z]+.[a-z]{2,3}`);
-        if(!regex.test(user.email)){
-            setEmailInvalid(true)
-            setTimeout(()=>{setEmailInvalid(false)},[2000])
-            return
-        }
         setNotFilled(false)
+        //check for empty fields and email validity
         if(user.firstName && user.lastName && user.email){
+            if(!regex.test(user.email)){
+                setEmailInvalid(true)
+                setTimeout(()=>{setEmailInvalid(false)},[1000])
+                return
+            }
             setActiveFormPart(2)
         }else{
             setNotFilled(true)
-            setTimeout(()=>{setNotFilled(false)},[2000])
+            setTimeout(()=>{setNotFilled(false)},[1000])
         }
     }
     const handleNext2 = () =>{
@@ -72,7 +84,7 @@ const Form = () => {
             setActiveFormPart(3)
         }else{
             setNotFilled(true)
-            setTimeout(()=>{setNotFilled(false)},[2000])
+            setTimeout(()=>{setNotFilled(false)},[1000])
         }
     }
 
